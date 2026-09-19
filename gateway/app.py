@@ -12,6 +12,10 @@ current_msg2 = ""
 def home():
     return render_template("index.html")
 
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
 # Returns the current LCD messages
 @app.route("/status", methods=["GET"])
 def get_status():
