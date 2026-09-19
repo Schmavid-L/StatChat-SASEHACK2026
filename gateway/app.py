@@ -1,20 +1,32 @@
-from flask import Flask, jsonify, request
-from hardware.lcd import set_display
+from flask import Flask, jsonify, request, render_template
+from arduino.app_utils import Bridge
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    template_folder="../frontend/templates",
+    static_folder="../frontend/static"
+)
 
-# Stores the current LCD messages
 current_msg1 = "AVAILABLE"
 current_msg2 = ""
 
 
-# Basic route used to confirm the gateway is running
+def set_display(msg1, msg2):
+    msg1 = str(msg1)[:16]
+    msg2 = str(msg2)[:16]
+
+    Bridge.call("print_msg", msg1, msg2)
+
+
+def toggle_led():
+    Bridge.call("led_toggle")
+
+
 @app.route("/")
 def home():
-    return "StatChat gateway is running"
+    return render_template("index.html")
 
 
-# Returns the current LCD messages
 @app.route("/status", methods=["GET"])
 def get_status():
     return jsonify({
@@ -23,37 +35,23 @@ def get_status():
     })
 
 
-# Receives two LCD messages from the website
 @app.route("/status", methods=["POST"])
 def update_status():
     global current_msg1
     global current_msg2
 
-    # Read JSON sent from the website
     data = request.get_json()
 
-    # Make sure both messages are included
     if not data or "msg1" not in data or "msg2" not in data:
         return jsonify({
             "error": "Missing msg1 or msg2"
         }), 400
 
-    # Convert messages to strings
-    msg1 = str(data["msg1"])
-    msg2 = str(data["msg2"])
+    current_msg1 = str(data["msg1"])[:16]
+    current_msg2 = str(data["msg2"])[:16]
 
-    # Limit each LCD row to 16 characters
-    msg1 = msg1[:16]
-    msg2 = msg2[:16]
-
-    # Save the current messages
-    current_msg1 = msg1
-    current_msg2 = msg2
-
-    # Send both rows to the UNO Q microcontroller
     set_display(current_msg1, current_msg2)
 
-    # Confirm the update
     return jsonify({
         "success": True,
         "msg1": current_msg1,
@@ -61,10 +59,18 @@ def update_status():
     })
 
 
-# Start the Flask gateway
+@app.route("/led", methods=["POST"])
+def led():
+    toggle_led()
+
+    return jsonify({
+        "success": True
+    })
+
+
 if __name__ == "__main__":
     app.run(
         host="0.0.0.0",
         port=5000,
-        debug=True
+        debug=False
     )
