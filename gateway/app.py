@@ -1,11 +1,11 @@
 from flask import Flask, jsonify, request
 from hardware.lcd import set_display
 
-# Create the Flask application
 app = Flask(__name__)
 
-# Stores the most recent status received by the gateway
-current_status = "AVAILABLE"
+# Stores the current LCD messages
+current_msg1 = "AVAILABLE"
+current_msg2 = ""
 
 
 # Basic route used to confirm the gateway is running
@@ -14,38 +14,50 @@ def home():
     return "StatChat gateway is running"
 
 
-# Returns the current status to the frontend
+# Returns the current LCD messages
 @app.route("/status", methods=["GET"])
 def get_status():
     return jsonify({
-        "status": current_status
+        "msg1": current_msg1,
+        "msg2": current_msg2
     })
 
 
-# Receives a new status from the frontend
+# Receives two LCD messages from the website
 @app.route("/status", methods=["POST"])
 def update_status():
-    global current_status
+    global current_msg1
+    global current_msg2
 
-    # Read incoming JSON data
+    # Read JSON sent from the website
     data = request.get_json()
 
-    # Make sure the request contains a status value
-    if not data or "status" not in data:
+    # Make sure both messages are included
+    if not data or "msg1" not in data or "msg2" not in data:
         return jsonify({
-            "error": "Missing status"
+            "error": "Missing msg1 or msg2"
         }), 400
 
-    # Save the new status
-    current_status = data["status"]
+    # Convert messages to strings
+    msg1 = str(data["msg1"])
+    msg2 = str(data["msg2"])
 
-    # Send the status to the hardware display layer
-    set_display(current_status)
+    # Limit each LCD row to 16 characters
+    msg1 = msg1[:16]
+    msg2 = msg2[:16]
 
-    # Confirm the update was successful
+    # Save the current messages
+    current_msg1 = msg1
+    current_msg2 = msg2
+
+    # Send both rows to the UNO Q microcontroller
+    set_display(current_msg1, current_msg2)
+
+    # Confirm the update
     return jsonify({
         "success": True,
-        "status": current_status
+        "msg1": current_msg1,
+        "msg2": current_msg2
     })
 
 
