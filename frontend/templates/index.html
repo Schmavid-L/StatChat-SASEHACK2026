@@ -1,49 +1,111 @@
-<! DOCTYPE html>
-<html lang = "en">
-<head> 
-  <meta charset= "UTF-8>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A remotely updated physical display for your in-office status and availabiltiy.">
+<!DOCTYPE html>
+<html lang="en">
 
-  <title StatChat </head>
-  <link rel="stylesheet" href="style.css">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="A remotely updated physical display for your in-office status and availability."
+  >
+
+  <title>StatChat</title>
+
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}"
+  >
 </head>
 
-  <body>
-    <header>
-      <h1> Welcome to your StatChat Dashboard! :D </h1> 
-      
-      <nav> 
-        <a href="about.html"> About Us </a>
-      </nav>
-    </header>
+<body>
+  <header>
+    <h1>Welcome to your StatChat Dashboard! :D</h1>
 
- <button class="programButton" data-msg1="AVAILABLE" data-msg2="">
-    Available
-</button>
+    <nav>
+      <a href="{{ url_for('about') }}">About Us</a>
+    </nav>
+  </header>
 
-<br><br>
+  <main>
+    <button
+      class="programButton"
+      data-msg1="AVAILABLE"
+      data-msg2=""
+    >
+      Available
+    </button>
 
-<button class="programButton" data-msg1="IN CLASS" data-msg2="PLEASE WAIT">
-    In Class
-</button>
+    <br><br>
 
-<br><br>
+    <button
+      class="programButton"
+      data-msg1="IN CLASS"
+      data-msg2="PLEASE WAIT"
+    >
+      In Class
+    </button>
 
-<button class="programButton" data-msg1="LUNCH" data-msg2="BACK SOON">
-    Lunch
-</button>
+    <br><br>
 
-<br><br>
+    <button
+      class="programButton"
+      data-msg1="LUNCH"
+      data-msg2="BACK SOON"
+    >
+      Lunch
+    </button>
 
-<button class="programButton" data-msg1="DO NOT DISTURB" data-msg2="">
-    Do Not Disturb
-</button>
+    <br><br>
+
+    <button
+      class="programButton"
+      data-msg1="DO NOT DISTURB"
+      data-msg2=""
+    >
+      Do Not Disturb
+    </button>
+
+    <p id="result"></p>
+  </main>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+  <h2>Custom Status</h2>
+
+<form id="customStatusForm">
+  <label for="customLine1">First line:</label>
+  <input
+    type="text"
+    id="customLine1"
+    maxlength="16"
+    placeholder="Enter first line"
+    required
+  >
+
+  <br><br>
+
+  <label for="customLine2">Second line:</label>
+  <input
+    type="text"
+    id="customLine2"
+    maxlength="16"
+    placeholder="Enter second line"
+  >
+
+  <br><br>
+
+  <button type="submit">Send Custom Status</button>
+</form>
 
 <p id="result"></p>
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
-    
-  </body>
+  
+</body>
 
 </html>
