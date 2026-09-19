@@ -25,14 +25,19 @@ void clear_msg() {
 void led_toggle() {
   led_state = !led_state;
 
+  // green led
   digitalWrite(8, led_state ? HIGH : LOW);
+  // red led
+  digitalWrite(7, led_state ? LOW : HIGH);
 }
 
-
 void setup() {
-  // External LED
+  // green led
   pinMode(8, OUTPUT);
   digitalWrite(8, LOW);
+  // red led
+  pinMode(7, OUTPUT);
+  digitalWrite(7, LOW);
 
   // LCD
   lcd.begin(16, 2);
@@ -45,7 +50,6 @@ void setup() {
   Bridge.provide_safe("led_toggle", led_toggle);
   Bridge.provide_safe("clear_msg", clear_msg);
 }
-
 
 void loop() {
 }
