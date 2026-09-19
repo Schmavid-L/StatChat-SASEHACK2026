@@ -18,16 +18,32 @@
       </nav>
     </header>
 
-     <input 
-        id="msg1"
-        type="text"
-        maxlength="16"
-        placehoder= "LCD line 1" >
+ <button class="programButton" data-msg1="AVAILABLE" data-msg2="">
+    Available
+</button>
 
-      <br> <br>
+<br><br>
 
-      <input 
-        id="msg2"
+<button class="programButton" data-msg1="IN CLASS" data-msg2="PLEASE WAIT">
+    In Class
+</button>
+
+<br><br>
+
+<button class="programButton" data-msg1="LUNCH" data-msg2="BACK SOON">
+    Lunch
+</button>
+
+<br><br>
+
+<button class="programButton" data-msg1="DO NOT DISTURB" data-msg2="">
+    Do Not Disturb
+</button>
+
+<p id="result"></p>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+    
   </body>
 
 </html>
