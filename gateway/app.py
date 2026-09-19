@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from hardware.lcd import set_display
 
 app = Flask(__name__)
@@ -7,12 +7,10 @@ app = Flask(__name__)
 current_msg1 = "AVAILABLE"
 current_msg2 = ""
 
-
 # Basic route used to confirm the gateway is running
 @app.route("/")
 def home():
-    return "StatChat gateway is running"
-
+    return render_template("index.html")
 
 # Returns the current LCD messages
 @app.route("/status", methods=["GET"])
