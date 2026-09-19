@@ -6,39 +6,46 @@ LiquidCrystal lcd(12, 11, 10, 5, 4, 3, 2);
 
 bool led_state = false;
 
-void print_msg(String msg1, String msg2) {
-  // first row
-  lcd.setCursor(0, 0);
-  lcd.print("                ");
-  lcd.setCursor(0, 0);
-  lcd.print(msg1.substring(0, 16));
 
-  // second row
+void print_msg(String msg1, String msg2) {
+  // Row 1
+  lcd.setCursor(0, 0);
+  lcd.print(msg1);
+
+  // Row 2
   lcd.setCursor(0, 1);
-  lcd.print("                ");
-  lcd.setCursor(0, 1);
-  lcd.print(msg2.substring(0, 16));
+  lcd.print(msg2);
 }
 
-void led_toggle(){
+void clear_msg() {
+  lcd.clear();
+}
+
+
+void led_toggle() {
   led_state = !led_state;
 
-  // green led on first toggle call
   digitalWrite(8, led_state ? HIGH : LOW);
-  // red led
-  digitalWrite(7, led_state ? LOW : HIGH);
 }
+
 
 void setup() {
-  // initialize lcd (16 col, 2 rows)
+  // External LED
+  pinMode(8, OUTPUT);
+  digitalWrite(8, LOW);
+
+  // LCD
   lcd.begin(16, 2);
 
-  // give python side the c++ functions
+  // Router Bridge
   Bridge.begin();
-  Bridge.provide("print_msg", print_msg);
-  Bridge.provide("led_toggle", led_toggle);
+
+  // Functions Python can call
+  Bridge.provide_safe("print_msg", print_msg);
+  Bridge.provide_safe("led_toggle", led_toggle);
+  Bridge.provide_safe("clear_msg", clear_msg);
 }
 
-void loop() {
 
+void loop() {
 }
