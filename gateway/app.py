@@ -12,6 +12,8 @@ current_msg2 = ""
 
 
 def set_display(msg1, msg2):
+    Bridge.call("clear_msg")
+    
     msg1 = str(msg1)[:16]
     msg2 = str(msg2)[:16]
 
@@ -21,6 +23,8 @@ def set_display(msg1, msg2):
 def toggle_led():
     Bridge.call("led_toggle")
 
+def clear_msg():
+    Bridge.call("clear_msg")
 
 @app.route("/")
 def home():
@@ -68,9 +72,3 @@ def led():
     })
 
 
-if __name__ == "__main__":
-    app.run(
-        host="0.0.0.0",
-        port=5000,
-        debug=False
-    )
