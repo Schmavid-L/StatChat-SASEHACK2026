@@ -9,106 +9,338 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <meta
-    name="description"
-    content="A remotely updated physical display for your in-office status and availability."
-  >
-
   <title>StatChat</title>
 
-  <link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='style.css') }}"
-  >
+  <!-- Live Server CSS path -->
+  <link rel="stylesheet" href="../static/style.css">
 </head>
 
 <body>
-  <header>
-    <h1>Welcome to your StatChat Dashboard! :D</h1>
-
-    <nav>
-      <a href="{{ url_for('about') }}">About Us</a>
-    </nav>
+  <header class="photoBanner">
+    <h1 class="siteTitle">
+      Welcome to your StatChat Dashboard! :D
+    </h1>
   </header>
 
   <main>
-    <section>
-      <h2>Preset Statuses</h2>
+    <div class="dashboardGrid">
 
-      <button
-        class="programButton"
-        data-msg1="AVAILABLE"
-        data-msg2=""
-      >
-        Available
-      </button>
+      <!-- Left side: Status picker -->
+      <div class="statusColumn">
+        <section class="statusSection">
+          <h2>Preset Statuses:</h2>
 
-      <br><br>
+          <p>
+            Select the status that you want to display.
+          </p>
 
-      <button
-        class="programButton"
-        data-msg1="IN CLASS"
-        data-msg2="PLEASE WAIT"
-      >
-        In Class
-      </button>
+          <div class="buttonContainer">
+            <button
+              type="button"
+              class="programButton availableButton"
+              data-msg1="AVAILABLE"
+              data-msg2=""
+            >
+              Available
+            </button>
 
-      <br><br>
+            <button
+              type="button"
+              class="programButton classButton"
+              data-msg1="BUSY"
+              data-msg2="PLEASE WAIT"
+            >
+              Busy
+            </button>
 
-      <button
-        class="programButton"
-        data-msg1="LUNCH"
-        data-msg2="BACK SOON"
-      >
-        Lunch
-      </button>
+            <button
+              type="button"
+              class="programButton lunchButton"
+              data-msg1="LUNCH"
+              data-msg2="BACK SOON"
+            >
+              Lunch
+            </button>
 
-      <br><br>
+            <button
+              type="button"
+              class="programButton disturbButton"
+              data-msg1="DO NOT DISTURB"
+              data-msg2=""
+            >
+              Do Not Disturb
+            </button>
 
-      <button
-        class="programButton"
-        data-msg1="DO NOT DISTURB"
-        data-msg2=""
-      >
-        Do Not Disturb
-      </button>
-    </section>
+            <button
+              type="button"
+              class="programButton knockButton"
+              data-msg1="PLEASE KNOCK"
+              data-msg2=""
+            >
+              Please Knock
+            </button>
 
-    <section>
-      <h2>Custom Status</h2>
+            <button
+              type="button"
+              class="programButton meetingButton"
+              data-msg1="IN A MEETING"
+              data-msg2=""
+            >
+              In a Meeting
+            </button>
+          </div>
+        </section>
 
-      <form id="customStatusForm">
-        <label for="customLine1">First line:</label>
+        <hr>
+
+        <section class="customSection">
+          <h2>Create your own status!</h2>
+
+          <form id="customStatusForm">
+            <label for="customLine1">
+              Custom status:
+            </label>
+
+            <input
+              type="text"
+              id="customLine1"
+              maxlength="16"
+              placeholder="Enter custom status"
+              required
+            >
+
+            <!-- Keeps the second LCD line empty -->
+            <input
+              type="hidden"
+              id="customLine2"
+              value=""
+            >
+
+            <button
+              class="submitButton"
+              type="submit"
+            >
+              Send
+            </button>
+          </form>
+        </section>
+
+        <p id="result"></p>
+      </div>
+
+      <!-- Right side: Daily schedule -->
+      <section class="scheduleSection">
+        <h2>Daily Schedule</h2>
+
+        <!-- Date controls -->
+        <div class="scheduleDateControls">
+          <button
+            type="button"
+            id="previousDay"
+            aria-label="Previous day"
+          >
+            &#10094;
+          </button>
+
+          <input
+            type="date"
+            id="scheduleDate"
+            aria-label="Schedule date"
+          >
+
+          <button
+            type="button"
+            id="nextDay"
+            aria-label="Next day"
+          >
+            &#10095;
+          </button>
+        </div>
+
+        <h3 id="scheduleDateTitle"></h3>
+
+        <!-- Opens the event popup -->
+        <div class="editScheduleContainer">
+          <button
+            type="button"
+            id="openScheduleModal"
+            class="editScheduleButton"
+          >
+            Edit Schedule
+          </button>
+        </div>
+
+        <!-- One-column schedule -->
+        <div class="scheduleLayout compactSchedule">
+          <div
+            id="scheduleTimeline"
+            class="scheduleTimeline"
+          ></div>
+        </div>
+
+        <p id="automaticStatusMessage">
+          No scheduled event is active.
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <!-- Event form popup -->
+  <div
+    id="scheduleModal"
+    class="modal hidden"
+  >
+    <div class="modalContent">
+      <div class="modalHeader">
+        <h2>Add a Schedule Event</h2>
+
+        <button
+          type="button"
+          id="closeScheduleModal"
+          class="closeModalButton"
+          aria-label="Close popup"
+        >
+          &times;
+        </button>
+      </div>
+
+      <form id="scheduleForm">
+        <label for="eventTitle">
+          Event name:
+        </label>
 
         <input
           type="text"
-          id="customLine1"
-          maxlength="16"
-          placeholder="Enter first line"
+          id="eventTitle"
+          maxlength="50"
+          placeholder="Example: Engineering class"
           required
         >
 
-        <br><br>
-
-        <label for="customLine2">Second line:</label>
+        <label for="eventDate">
+          Date:
+        </label>
 
         <input
-          type="text"
-          id="customLine2"
-          maxlength="16"
-          placeholder="Enter second line"
+          type="date"
+          id="eventDate"
+          required
         >
 
-        <br><br>
+        <div class="timeInputs">
+          <div>
+            <label for="eventStart">
+              Start time:
+            </label>
 
-        <button type="submit">Send Custom Status</button>
+            <input
+              type="time"
+              id="eventStart"
+              required
+            >
+          </div>
+
+          <div>
+            <label for="eventEnd">
+              End time:
+            </label>
+
+            <input
+              type="time"
+              id="eventEnd"
+              required
+            >
+          </div>
+        </div>
+
+        <label for="scheduledStatus">
+          Status:
+        </label>
+
+        <select
+          id="scheduledStatus"
+          required
+        >
+          <option value="">
+            Choose a status
+          </option>
+
+          <option value="AVAILABLE|">
+            Available
+          </option>
+
+          <option value="BUSY|PLEASE WAIT">
+            Busy
+          </option>
+
+          <option value="LUNCH|BACK SOON">
+            Lunch
+          </option>
+
+          <option value="DO NOT DISTURB|">
+            Do Not Disturb
+          </option>
+
+          <option value="PLEASE KNOCK|">
+            Please Knock
+          </option>
+
+          <option value="IN A MEETING|">
+            In a Meeting
+          </option>
+
+          <option value="custom">
+            Custom status
+          </option>
+        </select>
+
+        <!-- Appears when Custom Status is selected -->
+        <div
+          id="customScheduleStatus"
+          class="hidden"
+        >
+          <label for="scheduleMsg1">
+            LCD first line:
+          </label>
+
+          <input
+            type="text"
+            id="scheduleMsg1"
+            maxlength="16"
+            placeholder="Maximum 16 characters"
+          >
+
+          <label for="scheduleMsg2">
+            LCD second line:
+          </label>
+
+          <input
+            type="text"
+            id="scheduleMsg2"
+            maxlength="16"
+            placeholder="Maximum 16 characters"
+          >
+        </div>
+
+        <button
+          class="addEventButton"
+          type="submit"
+        >
+          Add Event
+        </button>
       </form>
-    </section>
+    </div>
+  </div>
 
-    <p id="result"></p>
-  </main>
+  <footer>
+    <p>
+      Created by: David Lee, Alice Vo, Teddy Yamada,
+      and Ariana Legaspi Gutierrez
+    </p>
+  </footer>
 
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <!-- Live Server JavaScript path -->
+  <script src="../static/script.js"></script>
 </body>
 
 </html>
