@@ -1,0 +1,543 @@
+/* Removes the browser's default spacing calculations */
+* {
+  box-sizing: border-box;
+}
+
+/* Entire webpage */
+body {
+  background-color: #b2eaf7;
+  color: #1f2933;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+}
+
+/* Prevent page scrolling while the popup is open */
+body.modalOpen {
+  overflow: hidden;
+}
+
+/* Photo banner */
+.photoBanner {
+  background-image:
+    linear-gradient(
+      rgba(0, 0, 0, 0.5),
+      rgba(0, 0, 0, 0.5)
+    ),
+    url("images/banner.jpg");
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  min-height: 200px;
+  padding: 30px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+
+  color: white;
+  text-align: left;
+}
+
+.siteTitle {
+  color: white;
+  font-size: 48px;
+  margin: 0 0 20px;
+  max-width: 750px;
+}
+
+.photoBanner nav a {
+  border: 2px solid white;
+  border-radius: 6px;
+  color: white;
+  display: inline-block;
+  padding: 10px 16px;
+  text-decoration: none;
+}
+
+.photoBanner nav a:hover {
+  background-color: white;
+  color: #167d96;
+}
+
+/* Main dashboard area */
+main {
+  background-color: transparent;
+  margin: 30px auto;
+  max-width: 1400px;
+  padding: 0 30px;
+  width: 100%;
+}
+
+/* Status picker and schedule columns */
+.dashboardGrid {
+  display: grid;
+  grid-template-columns:
+    minmax(350px, 1fr)
+    minmax(500px, 1.5fr);
+  gap: 30px;
+  align-items: start;
+}
+
+/* White containers */
+.statusColumn,
+.scheduleSection {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 30px;
+}
+
+main h2 {
+  color: #167d96;
+  text-align: left;
+}
+
+.statusSection > p,
+.customSection > p {
+  text-align: center;
+}
+
+/* Preset status buttons */
+.buttonContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* All buttons */
+button {
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 12px 18px;
+
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+
+button:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
+}
+
+/* Preset button colors */
+.availableButton {
+  background-color: #71f5c3;
+}
+
+.classButton {
+  background-color: #71cdf5;
+}
+
+.lunchButton {
+  background-color: #f2bd6d;
+}
+
+.disturbButton {
+  background-color: #f26d7f;
+}
+
+.knockButton {
+  background-color: #d16df2;
+}
+
+.meetingButton {
+  background-color: #ad3aff;
+}
+
+/* Lines between sections */
+hr {
+  border: none;
+  border-top: 4px solid #b2eaf7;
+  margin: 35px 0;
+}
+
+/* Custom status form */
+#customStatusForm {
+  display: flex;
+  flex-direction: column;
+  margin: 20px auto 0;
+  max-width: 400px;
+}
+
+#customStatusForm label {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+#customStatusForm input {
+  border: 1px solid #9ca3af;
+  border-radius: 6px;
+  font-size: 16px;
+  margin-bottom: 18px;
+  padding: 12px;
+  width: 100%;
+}
+
+#customStatusForm input:focus {
+  border-color: #167d96;
+  outline: 2px solid #b2eaf7;
+}
+
+.submitButton {
+  background-color: #167d96;
+}
+
+/* Status result */
+#result {
+  color: #167d96;
+  font-weight: bold;
+  margin-top: 25px;
+  min-height: 20px;
+  text-align: center;
+}
+
+/* --------------------------------
+   DAILY SCHEDULE
+-------------------------------- */
+
+.scheduleSection h2,
+.scheduleSection h3 {
+  color: #167d96;
+  text-align: center;
+}
+
+/* Previous day, date, and next day */
+.scheduleDateControls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.scheduleDateControls button {
+  background-color: #167d96;
+}
+
+.scheduleDateControls input {
+  border: 1px solid #9ca3af;
+  border-radius: 6px;
+  font-size: 16px;
+  padding: 9px;
+}
+
+/* Edit Schedule button */
+.editScheduleContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+}
+
+.editScheduleButton {
+  background-color: #167d96;
+}
+
+/* Scrollable schedule area */
+.scheduleLayout {
+  border: 1px solid #b7c0c7;
+  overflow-y: auto;
+}
+
+.compactSchedule {
+  height: 420px;
+  max-height: 420px;
+}
+
+/*
+  The schedule runs from 8:00 AM to 10:00 PM.
+  That is 14 rows multiplied by 54px.
+*/
+.scheduleTimeline {
+  min-height: 756px;
+  position: relative;
+}
+
+/* One row represents one hour */
+.timeSlot {
+  display: grid;
+  grid-template-columns: 75px 1fr;
+  height: 54px;
+}
+
+.timeSlot:nth-child(even) {
+  background-color: #f0f0f0;
+}
+
+.timeLabel {
+  border-right: 1px solid #7b858b;
+  border-top: 1px solid #b7c0c7;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 7px;
+  text-align: right;
+}
+
+.slotArea {
+  border-top: 1px solid #b7c0c7;
+}
+
+/* Event block displayed over the timeline */
+.scheduleEvent {
+  background-color: #71cdf5;
+  border-left: 5px solid #167d96;
+  border-radius: 6px;
+  color: #1f2933;
+
+  left: 82px;
+  overflow: hidden;
+  padding: 7px;
+  position: absolute;
+  right: 8px;
+  z-index: 2;
+}
+
+/* Currently active event */
+.scheduleEvent.activeEvent {
+  background-color: #71f5c3;
+  border-left-color: #249b47;
+}
+
+.scheduleEventTitle {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0;
+  text-align: left;
+}
+
+.scheduleEventDetails {
+  font-size: 12px;
+  margin: 3px 0;
+  text-align: left;
+}
+
+.scheduleDeleteButton {
+  background-color: #f26d7f;
+  font-size: 11px;
+  margin-top: 4px;
+  padding: 4px 8px;
+}
+
+/* --------------------------------
+   EVENT POPUP
+-------------------------------- */
+
+/* Dark background behind the popup */
+.modal {
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.65);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 20px;
+  position: fixed;
+  z-index: 1000;
+}
+
+/* Keeps the popup hidden until Edit Schedule is clicked */
+.modal.hidden {
+  display: none;
+}
+
+/* White popup container */
+.modalContent {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+
+  max-height: 90vh;
+  max-width: 550px;
+  overflow-y: auto;
+  padding: 25px;
+  width: 100%;
+}
+
+/* Popup title and close button */
+.modalHeader {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.modalHeader h2 {
+  color: #167d96;
+  margin: 0;
+}
+
+.closeModalButton {
+  background-color: transparent;
+  color: #444444;
+  font-size: 32px;
+  line-height: 1;
+  padding: 0 8px;
+}
+
+.closeModalButton:hover {
+  background-color: #eeeeee;
+  color: #cf3434;
+  opacity: 1;
+  transform: none;
+}
+
+/* Add event form inside popup */
+#scheduleForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#scheduleForm label {
+  font-weight: bold;
+  margin-top: 7px;
+}
+
+#scheduleForm input,
+#scheduleForm select {
+  border: 1px solid #9ca3af;
+  border-radius: 6px;
+  font-size: 16px;
+  padding: 10px;
+  width: 100%;
+}
+
+#scheduleForm input:focus,
+#scheduleForm select:focus {
+  border-color: #167d96;
+  outline: 2px solid #b2eaf7;
+}
+
+/* Start and end times side by side */
+.timeInputs {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.timeInputs div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.addEventButton {
+  background-color: #167d96;
+  margin-top: 12px;
+}
+
+/* Hide elements until JavaScript shows them */
+.hidden {
+  display: none;
+}
+
+/* Custom scheduled status fields */
+#customScheduleStatus {
+  background-color: #e8f8fc;
+  border-radius: 6px;
+  margin-top: 8px;
+  padding: 12px;
+}
+
+#customScheduleStatus.hidden {
+  display: none;
+}
+
+#customScheduleStatus label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+#customScheduleStatus input {
+  margin-bottom: 10px;
+}
+
+
+#automaticStatusMessage {
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Bottom of the website */
+footer {
+  color: #24515c;
+  padding: 10px 20px 25px;
+  text-align: center;
+}
+
+/* Stack columns on smaller screens */
+@media (max-width: 950px) {
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+  }
+
+  main {
+    padding: 0 20px;
+  }
+}
+
+/* Phone styles */
+@media (max-width: 600px) {
+  .photoBanner {
+    min-height: 230px;
+    padding: 20px;
+  }
+
+  .siteTitle {
+    font-size: 34px;
+  }
+
+  main {
+    margin: 20px auto;
+    padding: 0 15px;
+  }
+
+  .statusColumn,
+  .scheduleSection {
+    padding: 20px;
+  }
+
+  .buttonContainer {
+    flex-direction: column;
+  }
+
+  .programButton {
+    width: 100%;
+  }
+
+  .timeInputs {
+    grid-template-columns: 1fr;
+  }
+
+  .timeSlot {
+    grid-template-columns: 60px 1fr;
+  }
+
+  .scheduleEvent {
+    left: 67px;
+  }
+
+  .scheduleDateControls {
+    flex-wrap: wrap;
+  }
+
+  .editScheduleButton {
+    width: 100%;
+  }
+
+  .modalContent {
+    padding: 20px;
+  }
+
+  .lcdPreview {
+    padding: 0 15px;
+  }
+}
