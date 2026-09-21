@@ -49,23 +49,33 @@ def get_status():
 
 @app.route("/status", methods=["POST"])
 def update_status():
+    global current_status
     global current_msg1
     global current_msg2
 
     data = request.get_json()
 
-    if not data or "msg1" not in data or "msg2" not in data:
+    if not data or "status" not in data:
         return jsonify({
-            "error": "Missing msg1 or msg2"
+            "error": "Missing status"
         }), 400
 
-    current_msg1 = str(data["msg1"])[:16]
-    current_msg2 = str(data["msg2"])[:16]
+    requested_status = str(data["status"]).strip().lower()
+
+    if requested_status not in STATUS_MESSAGES:
+        return jsonify({
+            "error": "Invalid status",
+            "valid_statuses": list(STATUS_MESSAGES.keys())
+        }), 400
+
+    current_status = requested_status
+    current_msg1, current_msg2 = STATUS_MESSAGES[current_status]
 
     set_display(current_msg1, current_msg2)
 
     return jsonify({
         "success": True,
+        "status": current_status,
         "msg1": current_msg1,
         "msg2": current_msg2
     })
