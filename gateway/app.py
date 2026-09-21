@@ -1,92 +1,97 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask,jsonify,request
+from flask_cors import CORS
 from arduino.app_utils import Bridge
 
-app = Flask(
-    __name__,
-    template_folder="../frontend/templates",
-    static_folder="../frontend/static"
-)
+app=Flask(__name__)
+CORS(app)
 
-# Predefined statuses and their corresponding LCD messages
-STATUS_MESSAGES = {
-    "available": ("AVAILABLE", "COME IN"),
-    "busy": ("BUSY", "PLEASE WAIT"),
-    "lunch": ("OUT TO LUNCH", "BACK SOON"),
-    "do not disturb": ("DO NOT DISTURB", ""),
-    "please knock": ("PLEASE KNOCK", "")
-}
+current_line1="AVAILABLE"
+current_line2=""
+current_led_state=False
 
-current_status = "available"
-current_msg1, current_msg2 = STATUS_MESSAGES[current_status]
+def set_display(line1,line2):
+    line1=str(line1)[:16]
+    line2=str(line2)[:16]
+    Bridge.call("print_msg",line1,line2)
 
-def set_display(msg1, msg2):
-    Bridge.call("clear_msg")
-    
-    msg1 = str(msg1)[:16]
-    msg2 = str(msg2)[:16]
+def set_led(state):
+    Bridge.call("set_led",state)
 
-    Bridge.call("print_msg", msg1, msg2)
-
-
-def toggle_led():
-    Bridge.call("led_toggle")
-
-def clear_msg():
+def clear_display():
     Bridge.call("clear_msg")
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return "StatChat gateway is running"
 
-
-@app.route("/status", methods=["GET"])
+@app.route("/status",methods=["GET"])
 def get_status():
     return jsonify({
-        "status": current_status,
-        "msg1": current_msg1,
-        "msg2": current_msg2
+        "line1":current_line1,
+        "line2":current_line2,
+        "led":current_led_state
     })
 
-@app.route("/status", methods=["POST"])
+@app.route("/status",methods=["POST"])
 def update_status():
-    global current_status
-    global current_msg1
-    global current_msg2
+    global current_line1,current_line2
 
-    data = request.get_json()
+    data=request.get_json()
 
-    if not data or "status" not in data:
+    if not data or "line1" not in data or "line2" not in data:
         return jsonify({
-            "error": "Missing status"
-        }), 400
+            "success":False,
+            "message":"Missing line1 or line2"
+        }),400
 
-    requested_status = str(data["status"]).strip().lower()
+    current_line1=str(data["line1"])[:16]
+    current_line2=str(data["line2"])[:16]
 
-    if requested_status not in STATUS_MESSAGES:
-        return jsonify({
-            "error": "Invalid status",
-            "valid_statuses": list(STATUS_MESSAGES.keys())
-        }), 400
-
-    current_status = requested_status
-    current_msg1, current_msg2 = STATUS_MESSAGES[current_status]
-
-    set_display(current_msg1, current_msg2)
+    set_display(current_line1,current_line2)
 
     return jsonify({
-        "success": True,
-        "status": current_status,
-        "msg1": current_msg1,
-        "msg2": current_msg2
+        "success":True,
+        "line1":current_line1,
+        "line2":current_line2
     })
 
-
-@app.route("/led", methods=["POST"])
+@app.route("/led",methods=["POST"])
 def led():
-    toggle_led()
+    global current_led_state
+
+    data=request.get_json()
+
+    if not data or "state" not in data:
+        return jsonify({
+            "success":False,
+            "message":"Missing state"
+        }),400
+
+    state=data["state"]
+
+    if not isinstance(state,bool):
+        return jsonify({
+            "success":False,
+            "message":"state must be true or false"
+        }),400
+
+    current_led_state=state
+    set_led(current_led_state)
 
     return jsonify({
-        "success": True
+        "success":True,
+        "state":current_led_state
     })
 
+@app.route("/clear",methods=["POST"])
+def clear():
+    global current_line1,current_line2
 
+    clear_display()
+
+    current_line1=""
+    current_line2=""
+
+    return jsonify({
+        "success":True
+    })
