@@ -42,10 +42,10 @@ def home():
 @app.route("/status", methods=["GET"])
 def get_status():
     return jsonify({
+        "status": current_status,
         "msg1": current_msg1,
         "msg2": current_msg2
     })
-
 
 @app.route("/status", methods=["POST"])
 def update_status():
