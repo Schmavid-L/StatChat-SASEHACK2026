@@ -7,9 +7,17 @@ app = Flask(
     static_folder="../frontend/static"
 )
 
-current_msg1 = "AVAILABLE"
-current_msg2 = ""
+# Predefined statuses and their corresponding LCD messages
+STATUS_MESSAGES = {
+    "available": ("AVAILABLE", "COME IN"),
+    "busy": ("BUSY", "PLEASE WAIT"),
+    "lunch": ("OUT TO LUNCH", "BACK SOON"),
+    "do not disturb": ("DO NOT DISTURB", ""),
+    "please knock": ("PLEASE KNOCK", "")
+}
 
+current_status = "available"
+current_msg1, current_msg2 = STATUS_MESSAGES[current_status]
 
 def set_display(msg1, msg2):
     Bridge.call("clear_msg")
