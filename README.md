@@ -8,7 +8,7 @@ The project combines a familiar door sign with remote, real-time updates. It is 
 
 ## Why We Built It
 
-Office-hour schedules do not always reflect real-time availability. An instructor may be helping another student, teaching a class, at lunch, or temporarily unavailable. Students—especially commuters, first-generation students, and students balancing work or family responsibilities—may have limited time to wait or return later.
+Office hour schedules do not always reflect real-time availability. An instructor may be helping another student, teaching a class, at lunch, or temporarily unavailable. Students- especially commuters, first-generation students, and students balancing work or family responsibilities- may have limited time to wait or return later.
 
 StatChat provides a physical status display for students on site and a web interface that staff can update remotely. This makes availability clearer without requiring an expensive digital-signage system or dedicated mobile application.
 
