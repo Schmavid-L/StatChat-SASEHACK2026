@@ -93,3 +93,7 @@ The green LED uses D8, and the red LED uses D7. All components must share a comm
 ## Impact and Scalability
 
 StatChat uses inexpensive, widely available hardware and a lightweight web interface. A future deployment could support multiple offices, each with its own display and dashboard, without requiring students to install an application. The same design could serve tutoring centers, advising offices, laboratories, libraries, accessibility services, and community learning spaces.
+
+## Prototype Hardware Note 
+
+This prototype uses an Arduino UNO Q because it was the Wi-Fi-capable hardware available to our team during the hackathon. A production version would use a lower-cost Wi-Fi-enabled microcontroller, such as an ESP32, to make StatChat more affordable and scalable.
